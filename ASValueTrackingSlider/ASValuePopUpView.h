@@ -12,7 +12,7 @@
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 #import <UIKit/UIKit.h>
-
+static CGFloat const ArrowGapHeight = 6;
 @protocol ASValuePopUpViewDelegate <NSObject>
 - (CGFloat)currentValueOffset; //expects value in the range 0.0 - 1.0
 - (void)colorDidUpdate:(UIColor *)opaqueColor;

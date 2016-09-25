@@ -84,7 +84,7 @@
     _popUpViewColor = color;
     _popUpViewAnimatedColors = nil; // animated colors should be discarded
     [self.popUpView setColor:color];
-
+    
     if (_autoAdjustTrackColor) {
         super.minimumTrackTintColor = [self.popUpView opaqueColor];
     }
@@ -216,21 +216,21 @@
     _autoAdjustTrackColor = YES;
     _valueRange = self.maximumValue - self.minimumValue;
     _popUpViewAlwaysOn = NO;
-
+    
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
     [formatter setRoundingMode:NSNumberFormatterRoundHalfUp];
     [formatter setMaximumFractionDigits:2];
     [formatter setMinimumFractionDigits:2];
     _numberFormatter = formatter;
-
+    
     self.popUpView = [[ASValuePopUpView alloc] initWithFrame:CGRectZero];
     self.popUpViewColor = [UIColor colorWithHue:0.6 saturation:0.6 brightness:0.5 alpha:0.8];
-
+    
     self.popUpView.alpha = 0.0;
     self.popUpView.delegate = self;
     [self addSubview:self.popUpView];
-
+    
     self.textColor = [UIColor whiteColor];
     self.font = [UIFont boldSystemFontOfSize:22.0f];
 }
@@ -253,7 +253,7 @@
         valueString = [_numberFormatter stringFromNumber:@(self.value)];
         popUpViewSize = [self calculatePopUpViewSize];
     }
-    
+    popUpViewSize.height += ArrowGapHeight;
     // calculate the popUpView frame
     CGRect thumbRect = [self thumbRect];
     CGFloat thumbW = thumbRect.size.width;
@@ -278,7 +278,7 @@
     // negative values need more width than positive values
     CGSize minValSize = [self.popUpView popUpSizeForString:[_numberFormatter stringFromNumber:@(self.minimumValue)]];
     CGSize maxValSize = [self.popUpView popUpSizeForString:[_numberFormatter stringFromNumber:@(self.maximumValue)]];
-
+    
     return (minValSize.width >= maxValSize.width) ? minValSize : maxValSize;
 }
 
@@ -353,11 +353,11 @@
         super.minimumTrackTintColor = opaqueReturnColor;
     }];
 }
-
 - (void)setValue:(float)value animated:(BOOL)animated
 {
     if (animated) {
         [self.popUpView animateBlock:^(CFTimeInterval duration) {
+            //duration控制的是thumb，popUpView不受动画控制
             [UIView animateWithDuration:duration animations:^{
                 [super setValue:value animated:animated];
                 [self.popUpView setAnimationOffset:[self currentValueOffset] returnColor:^(UIColor *opaqueReturnColor) {

@@ -201,7 +201,7 @@ NSString *const SliderFillColorAnim = @"fillColor";
 - (void)animateBlock:(void (^)(CFTimeInterval duration))block
 {
     _shouldAnimate = YES;
-    _animDuration = 0.5;
+    _animDuration = 0.1;
     
     CAAnimation *anim = [self.layer animationForKey:@"position"];
     if ((anim)) { // if previous animation hasn't finished reduce the time of new animation
@@ -237,7 +237,7 @@ NSString *const SliderFillColorAnim = @"fillColor";
                      customize:^(CABasicAnimation *animation) {
                          animation.duration = 0.4;
                          animation.timingFunction = [CAMediaTimingFunction functionWithControlPoints:0.8 :2.5 :0.35 :0.5];
-         }];
+                     }];
         
         [self.layer animateKey:@"opacity" fromValue:nil toValue:@1.0 customize:^(CABasicAnimation *animation) {
             animation.duration = 0.1;
@@ -293,14 +293,15 @@ NSString *const SliderFillColorAnim = @"fillColor";
     // Create rounded rect
     CGRect roundedRect = rect;
     roundedRect.size.height -= _arrowLength;
+    roundedRect.size.height -= ArrowGapHeight;
     UIBezierPath *popUpPath = [UIBezierPath bezierPathWithRoundedRect:roundedRect cornerRadius:_cornerRadius];
     
     // Create arrow path
     CGFloat maxX = CGRectGetMaxX(roundedRect); // prevent arrow from extending beyond this point
     CGFloat arrowTipX = CGRectGetMidX(rect) + arrowOffset;
-    CGPoint tip = CGPointMake(arrowTipX, CGRectGetMaxY(rect));
+    CGPoint tip = CGPointMake(arrowTipX, CGRectGetMaxY(rect) - ArrowGapHeight);
     
-    CGFloat arrowLength = CGRectGetHeight(roundedRect)/2.0;
+    CGFloat arrowLength = CGRectGetHeight(roundedRect)/2.0 ;
     CGFloat x = arrowLength * tan(45.0 * M_PI/180); // x = half the length of the base of the arrow
     
     UIBezierPath *arrowPath = [UIBezierPath bezierPath];
@@ -320,7 +321,7 @@ NSString *const SliderFillColorAnim = @"fillColor";
     
     CGFloat textHeight = [_attributedString size].height;
     CGRect textRect = CGRectMake(self.bounds.origin.x,
-                                 (self.bounds.size.height-_arrowLength-textHeight)/2,
+                                 (self.bounds.size.height-_arrowLength-textHeight-ArrowGapHeight - 4/* -4 because textLayer is too close to bottom*/)/2,
                                  self.bounds.size.width, textHeight);
     _textLayer.frame = CGRectIntegral(textRect);
 }
