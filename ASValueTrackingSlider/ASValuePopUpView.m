@@ -200,15 +200,16 @@ NSString *const SliderFillColorAnim = @"fillColor";
 // call the supplied block, then set _shouldAnimate back to NO
 - (void)animateBlock:(void (^)(CFTimeInterval duration))block
 {
-    _shouldAnimate = YES;
+    _shouldAnimate = YES;//把block包裹在_shouldAnimate中
     _animDuration = 0.1;
     
     CAAnimation *anim = [self.layer animationForKey:@"position"];
+    //在上一个动画结束之前，又开启新的动画时，会调用这里
     if ((anim)) { // if previous animation hasn't finished reduce the time of new animation
         CFTimeInterval elapsedTime = MIN(CACurrentMediaTime() - anim.beginTime, anim.duration);
         _animDuration = _animDuration * elapsedTime / anim.duration;
     }
-    
+    //若当前无正在执行的动画anim，则只是执行block(0.1);
     block(_animDuration);
     _shouldAnimate = NO;
 }

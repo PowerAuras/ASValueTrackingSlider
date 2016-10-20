@@ -356,8 +356,9 @@
 - (void)setValue:(float)value animated:(BOOL)animated
 {
     if (animated) {
+        //popView 在_shouldAnimate的包裹下，调用block
         [self.popUpView animateBlock:^(CFTimeInterval duration) {
-            //duration控制的是thumb，popUpView不受动画控制
+            //在duration时间内，动画执行thumb的移动（setValue），popView的移动（layoutIf）
             [UIView animateWithDuration:duration animations:^{
                 [super setValue:value animated:animated];
                 [self.popUpView setAnimationOffset:[self currentValueOffset] returnColor:^(UIColor *opaqueReturnColor) {
