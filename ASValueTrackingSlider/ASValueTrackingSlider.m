@@ -355,16 +355,20 @@
 }
 - (void)setValue:(float)value animated:(BOOL)animated
 {
+    /*
+     在UIView动画中有趣的一件事情是：如果你直接在动画的block中提交修改了视图的相关属性时，它们会按照你预期的效果执行产生动画。但在你修改约束值的时候会直接计算出约束生效后的布局结果，并且直接显示 —— 即便你把修改约束的代码放在了动画的block当中执行。
+     
+     针对这个问题，iOS为所有视图提供了一个方法- (void)layoutIfNeeded用来立刻刷新界面，这个方法会调用当前视图上面所有的子视图的- (void)layoutSubviews让子视图进行重新布局。如果我们先设置好约束值，然后在动画的执行代码调用layoutIfNeeded就能让界面不断重新绘制产生动画效果。因此，上面的展开收回代码改成下面这样：
+     */
     if (animated) {
         //popView 在_shouldAnimate的包裹下，调用block
         [self.popUpView animateBlock:^(CFTimeInterval duration) {
-            //在duration时间内，动画执行thumb的移动（setValue），popView的移动（layoutIf）
             [UIView animateWithDuration:duration animations:^{
-                [super setValue:value animated:animated];
+                [super setValue:value animated:animated];//在duration时间内，动画执行thumb的移动（setValue）
                 [self.popUpView setAnimationOffset:[self currentValueOffset] returnColor:^(UIColor *opaqueReturnColor) {
                     super.minimumTrackTintColor = opaqueReturnColor;
                 }];
-                [self layoutIfNeeded];
+                [self layoutIfNeeded];//popView的移动（layoutIf）不受duration影响
             }];
         }];
     } else {
